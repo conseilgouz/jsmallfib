@@ -18,7 +18,7 @@
 	<updateservers>
 		<server type="extension" priority="1" name="Jsmallfib Update Site">https://raw.githubusercontent.com/conseilgouz/updates_github/master/jsmallfib.xml</server>
 	</updateservers>
-    <changelogurl>https://raw.githubusercontent.com/conseilgouz/jsmallfib/master/jsmallfib_changelog</changelogurl>
+    <changelogurl>https://raw.githubusercontent.com/conseilgouz/jsmallfib/master/jsmallfib_changelog.xml</changelogurl>
 	<config>
             <fields name="params">
     
