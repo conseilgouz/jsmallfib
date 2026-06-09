@@ -1272,7 +1272,7 @@ class plgContentjsmallfib extends CMSPlugin
             }
         }
 
-        // MANAGING UPLOA'/' **********************************
+        // MANAGING UPLOAD// **********************************
 
         $allow_file_archiving = $this->params->def('allow_file_archiving', 1);
 

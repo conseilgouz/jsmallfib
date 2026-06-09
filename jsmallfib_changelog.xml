@@ -15,6 +15,7 @@
         </fix>
         <addition>
             <item>Accept webp images</item>
+            <item>Update server on github</item>
         </addition>
 	</changelog>
 </changelogs>
