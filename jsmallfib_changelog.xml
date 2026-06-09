@@ -1,0 +1,14 @@
+<changelogs>
+	<changelog>
+		<element>jsmallfib</element>
+		<type>plugin</type>
+		<group>content</group>
+		<version>5.0</version>
+        <note>
+            <item>09/06/2026</item>
+        </note>
+        <change>
+            <item>Joomla 6 compatibility</item>
+        </change>
+	</changelog>
+</changelogs>

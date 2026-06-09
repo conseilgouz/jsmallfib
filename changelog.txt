@@ -1,0 +1,8 @@
+08/06/2026
+- Compatibilité Joomla 5/6
+
+15/12/2021
+- Compatibilité Joomla 4
+
+28/7/2019
+- define conditionnel de DS (ligne 57 de jsmalfib.php) - info https://forum.joomla.fr/forum/joomla-3-x/extensions-tierces/224257-jsmallfib?p=2003741#post2003741 
