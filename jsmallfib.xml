@@ -271,7 +271,7 @@
 	
                     <field name="swfupload_file_upload_limit" showon="upload_type:swfupload" type="text" size="15" default="100" label="SWFUPLOAD_FILE_UPLOAD_LIMIT" description="SWFUPLOAD_FILE_UPLOAD_LIMIT_DESC" />
                     <field name="swfupload_file_types" showon="upload_type:swfupload" type="textarea" cols="25" rows="3" default="*.*" label="SWFUPLOAD_FILE_TYPES" description="SWFUPLOAD_FILE_TYPES_DESC" />
-                    <field name="swfupload_file_types_description" type="text" size="30" default="All files" label="SWFUPLOAD_FILE_TYPES_DESCRIPTION" description="SWFUPLOAD_FILE_TYPES_DESCRIPTION_DESC" />
+                    <field name="swfupload_file_types_description" showon="upload_type:swfupload" type="text" size="30" default="All files" label="SWFUPLOAD_FILE_TYPES_DESCRIPTION" description="SWFUPLOAD_FILE_TYPES_DESCRIPTION_DESC" />
 
         	<!--field name="split_upload_section" type="radio" default="0" label="SPLIT_UPLOAD_SECTION" description="SPLIT_UPLOAD_SECTION_DESC">
             	<option value="0">JSMALL_NO</option>
