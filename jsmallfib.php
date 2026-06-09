@@ -65,11 +65,8 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Database\DatabaseInterface;
 
-// Joomla 3 does not provide a define for DS anymore, so we redefine it here
+// Joomla 3 does not provide a define for '/' anymore, so we redefine it here
 // 27/7/19 : https://forum.joomla.fr/forum/joomla-3-x/extensions-tierces/224257-jsmallfib?p=2003741#post2003741
-if (! defined('DS')) {
-    define('DS', DIRECTORY_SEPARATOR);
-}
 
 define('LOG_TYPE_TEXT', 0);
 define('LOG_TYPE_JSON', 1);
@@ -277,11 +274,6 @@ class plgContentjsmallfib extends CMSPlugin
 
         // set error reporting level
         // error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
-
-        // see http://www.electrictoolbox.com/php-prevent-e-deprecated-error-messages/
-        if (defined('E_DEPRECATED')) {
-            error_reporting(error_reporting() & ~ E_DEPRECATED);
-        }
 
         // this is needed to solve the blank page problem with a long list of files:
         // see solution on http://forum.joomla.org/viewtopic.php?p=1679517
@@ -726,16 +718,16 @@ class plgContentjsmallfib extends CMSPlugin
                 $this->default_absolute_path = $default_path_override_command_option;
             } elseif (! strcasecmp($rel_abs_string, "RELPATH")) {
                 $is_path_relative = 1;
-                $this->default_absolute_path = JPATH_ROOT . DS . $default_path_override_command_option;
+                $this->default_absolute_path = JPATH_ROOT . '/' . $default_path_override_command_option;
             }
         } else {
             // use backend values for default path and whether it's expressed as a relative or an absolute path
             $is_path_relative = $this->params->def('is_path_relative', 1);
 
             if ($is_path_relative) {
-                $this->default_absolute_path = JPATH_ROOT . DS . $this->chosen_decoding(trim($this->params->def('default_path', 'jsmallfib_top'), "/\\"));
+                $this->default_absolute_path = JPATH_ROOT . '/' . $this->chosen_decoding(trim($this->params->def('default_path', 'jsmallfib_top'), "/\\"));
             } else {
-                $this->default_absolute_path = $this->chosen_decoding(rtrim($this->params->def('default_path', JPATH_ROOT . DS . 'jsmallfib_top'), "/\\"));
+                $this->default_absolute_path = $this->chosen_decoding(rtrim($this->params->def('default_path', JPATH_ROOT . '/' . 'jsmallfib_top'), "/\\"));
             }
         }
 
@@ -847,7 +839,7 @@ class plgContentjsmallfib extends CMSPlugin
 
         // we finally set the starting dir to be the actual initial folder of the repository (in absolute terms)
         if ($repository) {
-            $starting_dir = $this->default_absolute_path . DS . $repository;
+            $starting_dir = $this->default_absolute_path . '/' . $repository;
         } else {
             $starting_dir = $this->default_absolute_path;
         }
@@ -931,9 +923,9 @@ class plgContentjsmallfib extends CMSPlugin
         $is_log_path_relative = $this->params->def('is_log_path_relative', 1);
 
         if ($is_log_path_relative) {
-            $default_absolute_log_path = JPATH_ROOT . DS . $this->chosen_decoding(trim($this->params->def('default_log_path', 'logs'), "/\\"));
+            $default_absolute_log_path = JPATH_ROOT . '/' . $this->chosen_decoding(trim($this->params->def('default_log_path', 'logs'), "/\\"));
         } else {
-            $default_absolute_log_path = $this->chosen_decoding(rtrim($this->params->def('default_log_path', JPATH_ROOT . DS . 'logs'), "/\\"));
+            $default_absolute_log_path = $this->chosen_decoding(rtrim($this->params->def('default_log_path', JPATH_ROOT . '/' . 'logs'), "/\\"));
         }
 
         // now create the default log path folder, if it doesn't exist
@@ -948,7 +940,7 @@ class plgContentjsmallfib extends CMSPlugin
 
         // set the prefix and suffix of the log file(s)
         if ($log_type != LOG_TYPE_RDBM) {
-            $logfile_prefix = $default_absolute_log_path . DS . "jsmallfib_log_" . md5($starting_dir);
+            $logfile_prefix = $default_absolute_log_path . '/' . "jsmallfib_log_" . md5($starting_dir);
             $logfile_extension = $log_type == LOG_TYPE_TEXT ? ".txt" : ".json";
         } else {
             $logfile_prefix = "";
@@ -1007,7 +999,7 @@ class plgContentjsmallfib extends CMSPlugin
             }
 
             // This format is forbidden (also check for trying to access folders outside the repository root)
-            if (preg_match("/\.\.(.*)/", $get_dir) || (strlen($get_dir) == 1 && $get_dir[0] == DS) || (! stristr(str_replace("/", "\\", $get_dir), str_replace("/", "\\", $starting_dir)))) {
+            if (preg_match("/\.\.(.*)/", $get_dir) || (strlen($get_dir) == 1 && $get_dir[0] == '/') || (! stristr(str_replace("/", "\\", $get_dir), str_replace("/", "\\", $starting_dir)))) {
                 $dir = $starting_dir;
                 $upper_dir = "";
             } else {
@@ -1026,7 +1018,7 @@ class plgContentjsmallfib extends CMSPlugin
                 // if asking to delete a folder
                 if ($access_rights > 4 && isset($_GET["delfolder"]) && strlen($_GET["delfolder"])) {
                     // only works with empty folders
-                    $tmpdir = html_entity_decode($dir . DS . $this->chosen_decoding(urldecode($_GET["delfolder"]))); // NOTE: Here we need urldecode as delfolder is double encoded /ErikLtz
+                    $tmpdir = html_entity_decode($dir . '/' . $this->chosen_decoding(urldecode($_GET["delfolder"]))); // NOTE: Here we need urldecode as delfolder is double encoded /ErikLtz
                     $rc = @rmdir($tmpdir);
 
                     // Check whether directory is gone
@@ -1043,11 +1035,11 @@ class plgContentjsmallfib extends CMSPlugin
                     }
                 } // if asking to delete a file
                 elseif ($access_rights > 3 && isset($_GET["delfile"]) && strlen($_GET["delfile"])) {
-                    $rc = @unlink(html_entity_decode($dir . DS . $this->chosen_decoding(urldecode($_GET["delfile"])))); // NOTE: Here we need urldecode as delfile is double encoded /ErikLtz
+                    $rc = @unlink(html_entity_decode($dir . '/' . $this->chosen_decoding(urldecode($_GET["delfile"])))); // NOTE: Here we need urldecode as delfile is double encoded /ErikLtz
 
                     // try removing thumbnail and thumbs dir (will only work if a thumbnail for this file exists and if the thumbs dir is empty)
-                    $rc_thumbs = @unlink(html_entity_decode($dir . DS . "JS_THUMBS" . DS . $this->chosen_decoding(urldecode($_GET["delfile"]))));
-                    $rc_thumbs = @rmdir($dir . DS . "JS_THUMBS");
+                    $rc_thumbs = @unlink(html_entity_decode($dir . '/' . "JS_THUMBS" . '/' . $this->chosen_decoding(urldecode($_GET["delfile"]))));
+                    $rc_thumbs = @rmdir($dir . '/' . "JS_THUMBS");
 
                     // for logging purposes
                     if ($log_removedfiles && $rc) {
@@ -1061,7 +1053,7 @@ class plgContentjsmallfib extends CMSPlugin
                 } // if asking to extract a file (Francisco Esteban)
                 elseif ($this->unzip_allow && $access_rights > 3 && isset($_GET["extfile"]) && strlen($_GET["extfile"])) {
                     $zip = (new Archive())->getAdapter('zip');
-                    $rc = $zip->extract(html_entity_decode($dir . DS . $this->chosen_decoding(urldecode($_GET["extfile"]))), $dir); // NOTE: Here we need urldecode as extfile is double encoded /ErikLtz
+                    $rc = $zip->extract(html_entity_decode($dir . '/' . $this->chosen_decoding(urldecode($_GET["extfile"]))), $dir); // NOTE: Here we need urldecode as extfile is double encoded /ErikLtz
 
                     // for logging purposes
                     $unzipped_file = "";
@@ -1070,11 +1062,11 @@ class plgContentjsmallfib extends CMSPlugin
                     }
                 } // if asking to restore an archived file
                 elseif ($access_rights > 3 && isset($_GET["restorefile"]) && strlen($_GET["restorefile"])) {
-                    if (! @copy(html_entity_decode($dir . DS . $this->chosen_decoding(urldecode($_GET['restorefile']))), html_entity_decode($this->upperDirSetForwardSlashes($dir) . DS . $this->chosen_decoding(urldecode($this->restoreArchiveFilename($_GET['restorefile'])))))) {
+                    if (! @copy(html_entity_decode($dir . '/' . $this->chosen_decoding(urldecode($_GET['restorefile']))), html_entity_decode($this->upperDirSetForwardSlashes($dir) . '/' . $this->chosen_decoding(urldecode($this->restoreArchiveFilename($_GET['restorefile'])))))) {
                         $error .= Text::sprintf('restorefile_failed', urldecode($_GET['restorefile']));
                         $restored_file = "";
                     } else {
-                        @chmod(html_entity_decode($this->upperDirSetForwardSlashes($dir) . DS . $this->chosen_decoding(urldecode($_GET['restorefile']))), $default_file_chmod);
+                        @chmod(html_entity_decode($this->upperDirSetForwardSlashes($dir) . '/' . $this->chosen_decoding(urldecode($_GET['restorefile']))), $default_file_chmod);
 
                         $success .= Text::sprintf('restorefile_success', urldecode($_GET['restorefile']));
 
@@ -1123,7 +1115,7 @@ class plgContentjsmallfib extends CMSPlugin
 
             if (! $is_current_position_an_archive) {
                 // Use current_position to build linked list of directories in $current_position_links [ErikLtz]
-                // $arr = explode(DS, $current_position); // substituted (same as in else statements) by code line below (and upperDir() set to upperDirSetForwardSlashes() to avoid problems in IE9 (see Paul Tease)
+                // $arr = explode('/', $current_position); // substituted (same as in else statements) by code line below (and upperDir() set to upperDirSetForwardSlashes() to avoid problems in IE9 (see Paul Tease)
                 $arr = explode("/", $this->makeForwardSlashes($current_position));
                 $current_position_links = "";
                 $tmpdir = $masked_dir;
@@ -1141,7 +1133,7 @@ class plgContentjsmallfib extends CMSPlugin
                 }
             } else {
                 // if inside an archive
-                // $arr = explode(DS, $current_position);
+                // $arr = explode('/', $current_position);
                 $arr = explode("/", $this->makeForwardSlashes($current_position));
                 $current_position_links = "";
                 $tmpdir = $this->upperDirSetForwardSlashes($masked_dir);
@@ -1214,7 +1206,7 @@ class plgContentjsmallfib extends CMSPlugin
             for ($i = 0; $i < count($forbidden); $i++) {
                 $_POST['userdir'] = str_replace($forbidden[$i], "", $_POST['userdir']);
             }
-            $tmpdir = html_entity_decode($dir . DS . $this->chosen_decoding($_POST['userdir']));
+            $tmpdir = html_entity_decode($dir . '/' . $this->chosen_decoding($_POST['userdir']));
             if (! @mkdir($tmpdir)) {
                 // Check for existing file with same name and choose different error message [ErikLtz]
                 if (file_exists($tmpdir)) {
@@ -1271,16 +1263,16 @@ class plgContentjsmallfib extends CMSPlugin
                 $error .= Text::sprintf('file_rename_failed', $this->chosen_encoding($old_filename), $this->chosen_encoding($new_filename));
             } elseif ($log_newfilenames) {
                 // try removing thumbnail of oldname file (will only work if a thumbnail for this file exists)
-                $rc_thumbs = @unlink(html_entity_decode($dir . DS . "JS_THUMBS" . DS . $old_filename));
+                $rc_thumbs = @unlink(html_entity_decode($dir . '/' . "JS_THUMBS" . '/' . $old_filename));
 
                 $this->do_log_this_action($log_newfilenames, LOG_ACTION_RENFILE, LOG_ACTION_RESULT_OK, $log_type, $logfile_prefix, $logfile_extension, $logfile_consolidation, $this->chosen_encoding($old_filename), $this->chosen_encoding($relative_dir), $this->chosen_encoding($new_filename));
             } else {
                 // try removing thumbnail of oldname file (will only work if a thumbnail for this file exists)
-                $rc_thumbs = @unlink(html_entity_decode($dir . DS . "JS_THUMBS" . DS . $old_filename));
+                $rc_thumbs = @unlink(html_entity_decode($dir . '/' . "JS_THUMBS" . '/' . $old_filename));
             }
         }
 
-        // MANAGING UPLOADS **********************************
+        // MANAGING UPLOA'/' **********************************
 
         $allow_file_archiving = $this->params->def('allow_file_archiving', 1);
 
@@ -1431,15 +1423,15 @@ class plgContentjsmallfib extends CMSPlugin
             $upload_dir = $this->unmaskAbsPath($upload_dir);
 
             // security check on upload_dir (suggestion by Mark Gentry)
-            if (preg_match("/\.\.(.*)/", $upload_dir) || (strlen($upload_dir) == 1 && $upload_dir[0] == DS) || (! stristr(str_replace("/", "\\", $upload_dir), str_replace("/", "\\", $starting_dir)))) {
+            if (preg_match("/\.\.(.*)/", $upload_dir) || (strlen($upload_dir) == 1 && $upload_dir[0] == '/') || (! stristr(str_replace("/", "\\", $upload_dir), str_replace("/", "\\", $starting_dir)))) {
                 $text = "<div id='JS_MAIN_DIV'><div id='JS_ERROR_DIV'><table><tr>" . "<td class='alertIcon'><img src=\"" . $this->imgdirNavigation . "warning.png\"></td><td>" . Text::_('security_file_upload') . "</td>" . "</tr></table></div></div>";
 
                 $article->text = $article->fulltext = $article->introtext = $text_array[0] . $text . $text_array[1];
                 return;
             }
 
-            if ($_GET['override_file'] == 1) {
-                $upload_file = $upload_dir . DS . $name;
+            if (isset($_GET['override_file']) && $_GET['override_file'] == 1) {
+                $upload_file = $upload_dir . '/' . $name;
 
                 // copy WAITING file onto existing one (will then unlink WAITING tmp file)
                 if (! @copy(html_entity_decode($this->chosen_decoding($_GET['tmpfiletoupload'] . "_WAITING")), html_entity_decode($upload_file))) {
@@ -1453,19 +1445,19 @@ class plgContentjsmallfib extends CMSPlugin
                     }
                 }
             } elseif ($allow_file_archiving && $_GET['archive_file'] == 1) {
-                if (! is_dir($upload_dir . DS . "JS_ARCHIVE") && ! ($rc = @mkdir($upload_dir . DS . "JS_ARCHIVE"))) {
-                    $text = "<div id='JS_MAIN_DIV'><div id='JS_ERROR_DIV'><table><tr>" . "<td class='alertIcon'><img src=\"" . $this->imgdirNavigation . "warning.png\"></td><td>" . Text::sprintf('failed_creating_archive_dir', $upload_dir . DS . "JS_ARCHIVE") . "</td>" . "</tr></table></div></div>";
+                if (! is_dir($upload_dir . '/' . "JS_ARCHIVE") && ! ($rc = @mkdir($upload_dir . '/' . "JS_ARCHIVE"))) {
+                    $text = "<div id='JS_MAIN_DIV'><div id='JS_ERROR_DIV'><table><tr>" . "<td class='alertIcon'><img src=\"" . $this->imgdirNavigation . "warning.png\"></td><td>" . Text::sprintf('failed_creating_archive_dir', $upload_dir . '/' . "JS_ARCHIVE") . "</td>" . "</tr></table></div></div>";
 
                     $article->text = $article->fulltext = $article->introtext = $text_array[0] . $text . $text_array[1];
                     return;
                 }
 
-                $upload_file = $upload_dir . DS . $name;
+                $upload_file = $upload_dir . '/' . $name;
 
                 if (strpos($name, '.') === false) {
-                    $archive_file = $upload_dir . DS . "JS_ARCHIVE" . DS . $name . " (" . Text::_('archived') . " " . date("Y-m-d H.i.s") . ")";
+                    $archive_file = $upload_dir . '/' . "JS_ARCHIVE" . '/' . $name . " (" . Text::_('archived') . " " . date("Y-m-d H.i.s") . ")";
                 } else {
-                    $archive_file = $this->fileWithoutExtension($upload_dir . DS . "JS_ARCHIVE" . DS . $name) . " (" . Text::_('archived') . " " . date("Y-m-d H.i.s") . ")." . $this->fileExtension($name);
+                    $archive_file = $this->fileWithoutExtension($upload_dir . '/' . "JS_ARCHIVE" . '/' . $name) . " (" . Text::_('archived') . " " . date("Y-m-d H.i.s") . ")." . $this->fileExtension($name);
                 }
 
                 // copy current file into archive folder
@@ -1496,14 +1488,14 @@ class plgContentjsmallfib extends CMSPlugin
             $upload_dir = $this->unmaskAbsPath($upload_dir);
 
             // security check on upload_dir (suggestion by Mark Gentry)
-            if (preg_match("/\.\.(.*)/", $upload_dir) || (strlen($upload_dir) == 1 && $upload_dir[0] == DS) || (! stristr(str_replace("/", "\\", $upload_dir), str_replace("/", "\\", $starting_dir)))) {
+            if (preg_match("/\.\.(.*)/", $upload_dir) || (strlen($upload_dir) == 1 && $upload_dir[0] == '/') || (! stristr(str_replace("/", "\\", $upload_dir), str_replace("/", "\\", $starting_dir)))) {
                 $text = "<div id='JS_MAIN_DIV'><div id='JS_ERROR_DIV'><table><tr>" . "<td class='alertIcon'><img src=\"" . $this->imgdirNavigation . "warning.png\"></td><td>" . Text::_('security_file_upload') . "</td>" . "</tr></table></div></div>";
 
                 $article->text = $article->fulltext = $article->introtext = $text_array[0] . $text . $text_array[1];
                 return;
             }
 
-            $upload_file = $upload_dir . DS . $name;
+            $upload_file = $upload_dir . '/' . $name;
 
             // DEBUG
             if ($this->DEBUG_enabled) {
@@ -1622,7 +1614,7 @@ class plgContentjsmallfib extends CMSPlugin
             $i = 0;
             while ($it = @readdir($open_dir)) {
                 if ($it != "." && $it != "..") {
-                    if (is_dir($dir . DS . $it)) {
+                    if (is_dir($dir . '/' . $it)) {
                         if (! in_array($it, $hidden_folders)) {
                             $dirs[] = htmlspecialchars($it);
                         }
@@ -1963,11 +1955,11 @@ class plgContentjsmallfib extends CMSPlugin
 
                 // different line if editing name or not
                 if (isset($_GET['old_foldername']) && strlen($_GET['old_foldername']) && ! strcmp($_GET['old_foldername'], $a_dir)) { // Removed urldecode on _GET /ErikLtz
-                    $text .= "<form action='" . $this->baselink . "&dir=" . urlencode($masked_dir) . "' method='post'>" . "<tr class='row $row_style'>" . "	<td class='fileIcon'>" . "	<img src=\"" . $this->imgdirNavigation . "folder.png\" width='" . $this->icon_width . "' />" . "	</td>" . "	<td class='fileName'>" . "	<input name='new_foldername' type='text' value=\"" . $this->chosen_encoding($a_dir) . "\" />" . "	</td>" . "	<td colspan='3' class='emptyTd'></td>" . "	<td class='fileAction'>" . "	<input type='image' src=\"" . $this->imgdirNavigation . "tick.png\" title=\"" . Text::_('rename_folder_title') . "\" />" . "	</td>" . "	<td class='fileAction'><a href='" . $this->baselink . "&dir=" . $this->urlEncodePreserveForwardSlashes($masked_dir) . "'>" . Text::_('rename_folder_cancel') . "</a></td>" . "</tr>" . "	<input type='hidden' name='old_foldername' value=\"" . urlencode($a_dir) . "\" />" . "</form>";
+                    $text .= "<form action='" . $this->baselink . "&dir=" . urlencode($masked_dir) . "' method='post'>" . "<tr class='row $row_style'>" . "	<td class='fileIcon'>" . "	<img src=\"" . $this->imgdirNavigation . "folder.png\" width='" . $this->icon_width . "' style='width:". $this->icon_width."px;max-width:inherit' />" . "	</td>" . "	<td class='fileName'>" . "	<input name='new_foldername' type='text' value=\"" . $this->chosen_encoding($a_dir) . "\" />" . "	</td>" . "	<td colspan='3' class='emptyTd'></td>" . "	<td class='fileAction'>" . "	<input type='image' src=\"" . $this->imgdirNavigation . "tick.png\" title=\"" . Text::_('rename_folder_title') . "\" />" . "	</td>" . "	<td class='fileAction'><a href='" . $this->baselink . "&dir=" . $this->urlEncodePreserveForwardSlashes($masked_dir) . "'>" . Text::_('rename_folder_cancel') . "</a></td>" . "</tr>" . "	<input type='hidden' name='old_foldername' value=\"" . urlencode($a_dir) . "\" />" . "</form>";
                 } else {
-                    $text .= "<tr class='row $row_style' onmouseover='this.className=\"row highlighted\"' onmouseout='this.className=\"row $row_style\"'>" . "	<td class='fileIcon'>" . "	<a href='" . $this->baselink . "&dir=" . $this->urlEncodePreserveForwardSlashes($masked_dir . "/" . $a_dir) . "'>" . "<img src=\"" . $this->imgdirNavigation . "folder.png\" width='" . $this->icon_width . "' /></a>" . "	</td>" . "	<td class='fileName'>" . "	<a href='" . $this->baselink . "&dir=" . $this->urlEncodePreserveForwardSlashes($masked_dir . "/" . $a_dir) . "'>" . $this->chosen_encoding($a_dir) . "</a>" .
+                    $text .= "<tr class='row $row_style' onmouseover='this.className=\"row highlighted\"' onmouseout='this.className=\"row $row_style\"'>" . "	<td class='fileIcon'>" . "	<a href='" . $this->baselink . "&dir=" . $this->urlEncodePreserveForwardSlashes($masked_dir . "/" . $a_dir) . "'>" . "<img src=\"" . $this->imgdirNavigation . "folder.png\" width='" . $this->icon_width . "' style='width:". $this->icon_width."px;max-width:inherit' /></a>" . "	</td>" . "	<td class='fileName'>" . "	<a href='" . $this->baselink . "&dir=" . $this->urlEncodePreserveForwardSlashes($masked_dir . "/" . $a_dir) . "'>" . $this->chosen_encoding($a_dir) . "</a>" .
                     // ." <a href='".$this->baselink."&dir=".str_replace("%2F", "/", urlencode($masked_dir))."/".str_replace("%2F", "/", urlencode($a_dir))."'>".$this->chosen_encoding($a_dir)."</a>"
-                    // ." <a href='".$this->baselink."&dir=".urlencode($masked_dir).DS.urlencode($a_dir)."'>".$this->chosen_encoding($a_dir)."</a>" // THIS WAS THE ORIGINAL LINE (changed for Paul Tease 20110909)
+                    // ." <a href='".$this->baselink."&dir=".urlencode($masked_dir).'/'.urlencode($a_dir)."'>".$this->chosen_encoding($a_dir)."</a>" // THIS WAS THE ORIGINAL LINE (changed for Paul Tease 20110909)
                     // ." <a href='".$this->baselink."&dir=".urlencode($masked_dir."/".$a_dir)."'>".$this->chosen_encoding($a_dir)."</a>"
                     "	</td>" . "	<td colspan='3' class='emptyTd'></td>";
                     if ($access_rights > 2) {
@@ -2003,7 +1995,7 @@ class plgContentjsmallfib extends CMSPlugin
                     $file_icon_td_end = "</td>";
                 } else {
                     $file_icon_td_begin = "<td class='fileIcon'>";
-                    $file_icon_image = "<img src=\"" . $this->fileIcon($a_file["extension"]) . "\" width='" . $this->icon_width . "' border='0' />";
+                    $file_icon_image = "<img src=\"" . $this->fileIcon($a_file["extension"]) . "\" style='width:". $this->icon_width."px!important;max-width:inherit' width='" . $this->icon_width . "' border='0' />";
                     $file_icon_td_end = "</td>";
                 }
 
@@ -2020,7 +2012,7 @@ class plgContentjsmallfib extends CMSPlugin
 
                         // set the <a href...> tag for the file link (depends on the linking method, direct or through the open/download box)
                         if ($is_current_position_inside_webroot && $is_direct_link_to_files) {
-                            $file_link_a_tag_begin = "<a href=\"" . $this->makeForwardSlashes($this->chosen_encoding($relative_dir . DS . $a_file["name"])) . "\" " . ($is_direct_link_to_files > 1 ? "target='_blank'" : "") . ">";
+                            $file_link_a_tag_begin = "<a href=\"" . $this->makeForwardSlashes($this->chosen_encoding($relative_dir . '/' . $a_file["name"])) . "\" " . ($is_direct_link_to_files > 1 ? "target='_blank'" : "") . ">";
                         } else {
                             $file_link_a_tag_begin = "<a href='" . $this->baselink . "&dir=" . $this->urlEncodePreserveForwardSlashes($masked_dir) . "&download_file=" . $this->urlEncodePreserveForwardSlashes($masked_dir . "/" . $a_file["name"]) . "'>";
                         }
@@ -2087,7 +2079,7 @@ class plgContentjsmallfib extends CMSPlugin
 
         // START (and END) OF div TAG with id JS_ARCHIVE_DIV
 
-        if (is_dir($dir . DS . "JS_ARCHIVE")) {
+        if (is_dir($dir . '/' . "JS_ARCHIVE")) {
             // $text .= "<img src=\"".$this->imgdirNavigation."null.gif\" height=10 />";
 
             $archiveLinkATag = "<a href='" . $this->baselink . "&dir=" . $this->urlEncodePreserveForwardSlashes($masked_dir) . "/JS_ARCHIVE'>";
@@ -2148,91 +2140,6 @@ class plgContentjsmallfib extends CMSPlugin
 
                 $text .= $toggle_upload_type_link;
                 $text .= Text::_('upload_file') . ":&nbsp;" . "	</td>" . "	<td>" . "	<input name=\"userfile\" type=\"file\" />" . "	</td>" . "	<td class='actionIcon'>" . "	<input type='image' src=\"" . $this->imgdirNavigation . "addfile.png\" title=\"" . Text::_('upload_file') . "\" />" . "	<input type='hidden' name='upload_dir' value=\"" . urlencode($masked_dir) . "\">";
-            } else {
-                // DISPLAYING SWF UPLOAD
-
-                $SWFUpload_file_size_limit_number = $this->params->def('swfupload_file_size_limit_number', 0);
-                $SWFUpload_file_size_limit_unit = $this->params->def('swfupload_file_size_limit_unit', "KB");
-
-                $SWFUpload_file_size_limit = sprintf("%d %s", $SWFUpload_file_size_limit_number, $SWFUpload_file_size_limit_unit);
-
-                $SWFUpload_file_upload_limit = $this->params->def('swfupload_file_upload_limit', "100");
-
-                $SWFUpload_file_types = $this->params->def('swfupload_file_types', "*.*");
-                $SWFUpload_file_types_description = $this->params->def('swfupload_file_types_description', "All files");
-
-                $SWFUpload_button_action = $this->params->def('swfupload_button_action', "1");
-                if ($SWFUpload_button_action) {
-                    // CASE OF MULTIPLE-FILE UPLOAD
-                    $button_action_string = "SWFUpload.BUTTON_ACTION.SELECT_FILES";
-                    $select_upload_text = $toggle_upload_type_link . Text::_('select_files_to_upload');
-
-                    // parameter used to determine how upload.php will act in case of upload of existing files (for multiple files)
-                    // options:
-                    //
-                    // 1. ask
-                    // 2. leave existing files
-                    // 3. override existing files
-                    // 4. archive existing files (if archive option is enabled)
-                    //
-                    $SWFUpload_resolve_conflicts = $this->params->def('swfupload_resolve_conflicts', 0);
-
-                    if ($allow_file_archiving) {
-                        $resolve_conflicts_option_3 = "<option value='3' " . ($SWFUpload_resolve_conflicts == 3 ? "selected" : "") . ">" . Text::_('swfupload_resolve_conflict_option_archive') . "</option>";
-                    } else {
-                        $resolve_conflicts_option_3 = "";
-                    }
-                    $SWFUpload_resolve_conflicts_form_tag = "<select name='resolve_conflicts'>" . "<option value='0' " . ($SWFUpload_resolve_conflicts == 0 ? "selected" : "") . ">" . Text::_('swfupload_resolve_conflict_option_ask') . "</option>" . "<option value='1' " . ($SWFUpload_resolve_conflicts == 1 ? "selected" : "") . ">" . Text::_('swfupload_resolve_conflict_option_cancel') . "</option>" . "<option value='2' " . ($SWFUpload_resolve_conflicts == 2 ? "selected" : "") . ">" . Text::_('swfupload_resolve_conflict_option_override') . "</option>" . $resolve_conflicts_option_3 . "</select>";
-                } else {
-                    // CASE OF SINGLE-FILE UPLOAD
-                    $button_action_string = "SWFUpload.BUTTON_ACTION.SELECT_FILE";
-                    $select_upload_text = $toggle_upload_type_link . Text::_('select_file_to_upload');
-
-                    $SWFUpload_resolve_conflicts_form_tag = "<input type='hidden' name='resolve_conflicts' value='0'>";
-                }
-
-                $SWFUpload_script_text = "<script type='text/javascript'>" .
-                "	var swfu;" .
-                "	window.onload = function() {" .
-                "		var settings = {" .
-                "			flash_url : \"" . Uri::base() . "plugins/content/jsmallfib/swfupload/swfupload.swf\"," . "			upload_url: \"" . Uri::base() . "plugins/content/jsmallfib/swfupload/upload.php\"," . "			post_params: {" . "				\"upload_dir\" : \"" . $this->urlEncodePreserveForwardSlashes($this->encrypt($dir . "/", date("Y-m-d"))) . "\"," . "				\"dir_sep\" : \"" . (DS == '/' ? 'forwardslash' : 'backslash') . "\"," . "				\"default_file_chmod\" : \"" . $default_file_chmod . "\"," . "				\"archived_string\" : \"" . Text::_('archived') . "\"," . "				\"encode_to_utf8\" : \"" . $this->encode_to_utf8 . "\"," . "				\"access_rights\" : \"" . $access_rights . "\"" . "			}," . "			file_size_limit : \"" . $SWFUpload_file_size_limit . "\"," . "			file_types : '" . $SWFUpload_file_types . "'," . "			file_types_description : '" . $SWFUpload_file_types_description . "'," . "			file_upload_limit : " . $SWFUpload_file_upload_limit . "," . "			file_queue_limit : 0," . "			custom_settings : {" . "				progressTarget : \"fsUploadProgress\"," . "				cancelButtonId : \"btnCancel\"" . "			}," .
-                "			debug : " . ($this->DEBUG_enabled ? "true" : "false") . "," .
-
-                // Button settings
-                // ." button_image_url: \"".Uri::base().'plugins/content/jsmallfib/media/addfiles.png'."\","
-                "			button_image_url: \"" . Uri::base() . $this->imgdirNavigation . 'addfiles_sprite.png' . "\"," . "			button_width: \"26\"," . "			button_height: \"23\"," . "			button_placeholder_id: \"spanButtonPlaceHolder\"," .
-                // ." button_text: '<span class=\"theFont\">Upload new files</span>',"
-                // ." button_text_style: \".theFont { font-family: Verdana; font-size: 11; }\","
-                // ." button_text_left_padding: 32,"
-                // ." button_text_top_padding: 3,"
-                "			button_action: " . $button_action_string . "," .
-
-                // The event handler functions are defined in handlers.js
-                "			file_queued_handler : fileQueued," . "			file_queue_error_handler : fileQueueError," . "			file_dialog_complete_handler : fileDialogComplete," . "			upload_start_handler : uploadStart," . "			upload_progress_handler : uploadProgress," . "			upload_error_handler : uploadError," . "			upload_success_handler : uploadSuccess," . "			upload_complete_handler : uploadComplete," .
-
-                // Queue plugin event
-                "			queue_complete_handler : queueComplete" . "		};" .
-                "		swfu = new SWFUpload(settings);" . "	};" .
-                "</script>";
-
-                $text .= $SWFUpload_script_text;
-
-                // set and initialise a temp file for communication of upload file data with upload.php script
-                $resolve_conflicts_filename = JPATH_ROOT . DS . "logs" . DS . "JS" . $userid . "_" . mt_rand() . ".tmp";
-
-                // set form data
-                $text .= "" .
-                // ."<form style='display:inline; margin: 0px; padding: 0px;' enctype='multipart/form-data' action='".Uri::base()."plugins/content/upload.php' method='post'>"
-
-                "<div noclass=\"fieldset flash\" id=\"fsUploadProgress\">" .
-                // ."<span class=\"legend\">Upload Queue</span>"
-                "</div>" .
-                // ."<div id=\"divStatus\">0 Files Uploaded</div>"
-                // ."<div>"
-                "<span>" . $select_upload_text . "</span>" . "<span style='margin-right:5px'>" . $SWFUpload_resolve_conflicts_form_tag . "</span>" . "<span id='spanButtonPlaceHolder'></span>" . "<input type='hidden' name='resolve_conflicts_filename' value='" . $resolve_conflicts_filename . "'>" . "<input type='hidden' name='swfupload_complete_url' value='" . $this->baselink . "&dir=" . urlencode($masked_dir) . "&resolve_conflicts_filename=" . urlencode($resolve_conflicts_filename) . "'>" . "<input id=\"btnCancel\" type=\"button\" value=\"" . Text::_('cancel_all_uploads') . "\" onclick=\"swfu.cancelQueue();\" disabled=\"disabled\" style=\"margin-left: 2px; font-size: 8pt; height: 23px;\" />";
-                // ."</div>";
-
-                // ."</form>";
             }
 
             $text .= "	" . // </td>"
@@ -3068,7 +2975,7 @@ class plgContentjsmallfib extends CMSPlugin
         "#JS_FILES_DIV tr.row.even {" . "	background-color:#" . ($this->evenrows_color) . ";" . "}	" .
         "#JS_FILES_DIV td.groupSwitchIcon {" . "	text-align:center;" . "	width:40px;" . // we don't put 0 here as Safari seems to take it as 'no fixed width'
         "	padding:5px;" . "}	" .
-        "#JS_FILES_DIV td.fileIcon {" . "	text-align:center;" . "	width:" . $this->icon_width . "px;" .
+        "#JS_FILES_DIV td.fileIcon {" . "	text-align:center;" . "	width:" . $this->icon_width . "px;max-width:inherit;" .
         // ." width:1px;" // we don't put 0 here as Safari seems to take it as 'no fixed width' // ES20120502 replaced by line above (ref. Clay Hess)
         "	padding:" . $this->icon_padding . "px;" . "}	" .
         "#JS_FILES_DIV td.fileThumb {" . "	padding:" . $this->icon_padding . "px;width:32px;text-align: center;" .
@@ -3351,19 +3258,19 @@ class plgContentjsmallfib extends CMSPlugin
     public function upperDir($dir)
     {
         // Simpler implementation of upperDir method /ErikLtz
-        $arr = explode(DS, $dir);
+        $arr = explode('/', $dir);
         unset($arr[count($arr) - 1]);
-        return implode(DS, $arr);
+        return implode('/', $arr);
 
         /*
-         * $chops = explode(DS, $dir);
+         * $chops = explode('/', $dir);
          * $num = count($chops);
          * $chops2 = array();
          * for($i = 0; $i < $num - 1; $i++)
          * {
          * $chops2[$i] = $chops[$i];
          * }
-         * $dir2 = implode(DS, $chops2);
+         * $dir2 = implode('/', $chops2);
          * return $dir2;
          */
     }
@@ -3381,7 +3288,7 @@ class plgContentjsmallfib extends CMSPlugin
     // [ErikLtz]
     public function baseName($dir)
     {
-        // $arr = explode(DS, $dir);
+        // $arr = explode('/', $dir);
         $arr = explode("/", $this->makeForwardSlashes($dir));
         return $arr[count($arr) - 1];
     }
@@ -3507,9 +3414,9 @@ class plgContentjsmallfib extends CMSPlugin
         }
 
         // also return 0 if thumbs folder cannot be created
-        if (! is_dir($dir . DS . "JS_THUMBS") && ! ($rc = @mkdir($dir . DS . "JS_THUMBS"))) {
+        if (! is_dir($dir . '/' . "JS_THUMBS") && ! ($rc = @mkdir($dir . '/' . "JS_THUMBS"))) {
             if ($this->DEBUG_enabled) {
-                echo "<br />[" . $dir . DS . "JS_THUMBS] cannot be created<br /><br />";
+                echo "<br />[" . $dir . '/' . "JS_THUMBS] cannot be created<br /><br />";
             }
             return 0;
         }
@@ -3519,7 +3426,8 @@ class plgContentjsmallfib extends CMSPlugin
             "JPG",
             "JPEG",
             "GIF",
-            "PNG"
+            "PNG",
+            "WEBP"
         );
 
         if (! in_array(strtoupper($imgfile_ext), $available_extensions)) {
@@ -3527,30 +3435,33 @@ class plgContentjsmallfib extends CMSPlugin
         }
 
         // if thumbnail file exists, do some checks before returning 1 (it means use current thumbnail)
-        if (file_exists($dir . DS . "JS_THUMBS" . DS . $imgfile)) {
+        if (file_exists($dir . '/' . "JS_THUMBS" . '/' . $imgfile)) {
             // check if thumbnail is newer than file and the image size is the same as the requested size (in this case return 1 as we don't need to make a new thumb)
-            list($curthumbwidth, $curthumbheight) = getimagesize($dir . DS . "JS_THUMBS" . DS . $imgfile);
-            if ((filemtime($dir . DS . "JS_THUMBS" . DS . $imgfile) >= filemtime($dir . DS . $imgfile)) && $thumbnail_width == $curthumbwidth && $thumbnail_height == $curthumbheight) {
+            list($curthumbwidth, $curthumbheight) = getimagesize($dir . '/' . "JS_THUMBS" . '/' . $imgfile);
+            if ((filemtime($dir . '/' . "JS_THUMBS" . '/' . $imgfile) >= filemtime($dir . '/' . $imgfile)) && $thumbnail_width == $curthumbwidth && $thumbnail_height == $curthumbheight) {
                 return 1;
             }
         }
 
         // getting the image dimensions
-        list($width_orig, $height_orig) = getimagesize($dir . DS . $imgfile);
+        list($width_orig, $height_orig) = getimagesize($dir . '/' . $imgfile);
 
         // switch based on image type
         switch (strtoupper($imgfile_ext)) {
             case "JPEG":
             case "JPG":
-                $image_resource = imagecreatefromjpeg($dir . DS . $imgfile);
+                $image_resource = imagecreatefromjpeg($dir . '/' . $imgfile);
                 break;
 
             case "GIF":
-                $image_resource = imagecreatefromgif($dir . DS . $imgfile);
+                $image_resource = imagecreatefromgif($dir . '/' . $imgfile);
                 break;
 
             case "PNG":
-                $image_resource = imagecreatefrompng($dir . DS . $imgfile);
+                $image_resource = imagecreatefrompng($dir . '/' . $imgfile);
+                break;
+            case "WEBP":
+                $image_resource = imagecreatefromwebp($dir . '/' . $imgfile);
                 break;
         }
         $ratio_orig = $width_orig / $height_orig;
@@ -3568,31 +3479,28 @@ class plgContentjsmallfib extends CMSPlugin
 
         $process = imagecreatetruecolor(round($new_width), round($new_height));
 
-        imagecopyresampled($process, $image_resource, 0, 0, 0, 0, $new_width, $new_height, $width_orig, $height_orig);
+        imagecopyresampled($process, $image_resource, 0, 0, 0, 0, (int)$new_width, (int)$new_height, (int)$width_orig, (int)$height_orig);
         $thumb = imagecreatetruecolor($thumbnail_width, $thumbnail_height);
-        imagecopyresampled($thumb, $process, 0, 0, ($x_mid - ($thumbnail_width / 2)), ($y_mid - ($thumbnail_height / 2)), $thumbnail_width, $thumbnail_height, $thumbnail_width, $thumbnail_height);
+        imagecopyresampled($thumb, $process, 0, 0, (int)($x_mid - ($thumbnail_width / 2)), (int)($y_mid - ($thumbnail_height / 2)), (int)$thumbnail_width, (int)$thumbnail_height, (int)$thumbnail_width, (int)$thumbnail_height);
 
-        imagejpeg($thumb, $dir . DS . "JS_THUMBS" . DS . $imgfile);
-
-        imagedestroy($process);
-        imagedestroy($image_resource);
+        imagejpeg($thumb, $dir . '/' . "JS_THUMBS" . '/' . $imgfile);
 
         return 1;
     }
 
     public function remove_thumbnail_files($dir)
     {
-        if (is_dir($dir . DS . "JS_THUMBS")) {
-            if ($dh = opendir($dir . DS . "JS_THUMBS")) {
+        if (is_dir($dir . '/' . "JS_THUMBS")) {
+            if ($dh = opendir($dir . '/' . "JS_THUMBS")) {
                 while (($file = readdir($dh)) !== false) {
                     if ($file == '.' || $file == '..') {
                         continue;
                     }
-                    @unlink($dir . DS . "JS_THUMBS" . DS . $file);
+                    @unlink($dir . '/' . "JS_THUMBS" . '/' . $file);
                 }
                 closedir($dh);
             }
-            @rmdir($dir . DS . "JS_THUMBS");
+            @rmdir($dir . '/' . "JS_THUMBS");
         }
     }
 } // end of plugin class extension

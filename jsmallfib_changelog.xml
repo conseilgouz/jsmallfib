@@ -10,5 +10,11 @@
         <change>
             <item>Joomla 6 compatibility</item>
         </change>
+        <fix>
+            <item>Remove DS Constant</item>
+        </fix>
+        <addition>
+            <item>Accept webp images</item>
+        </addition>
 	</changelog>
 </changelogs>
