@@ -3,7 +3,7 @@
 		<element>jsmallfib</element>
 		<type>plugin</type>
 		<group>content</group>
-		<version>5.0</version>
+		<version>5.0.1</version>
         <note>
             <item>09/06/2026</item>
         </note>
@@ -12,7 +12,7 @@
         </change>
         <remove>
             <item>Remove DS Constant</item>
-            <item> SWFUpload library</item>
+            <item>SWFUpload library</item>
         </remove>
         <addition>
             <item>Accept webp images</item>

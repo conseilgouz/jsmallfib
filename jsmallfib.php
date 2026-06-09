@@ -2152,7 +2152,7 @@ class plgContentjsmallfib extends CMSPlugin
         $hide_credits_icon = $this->params->def('hide_credits_icon', 0);
 
         if (! $hide_credits_icon) {
-            $credits_icon = "<td class='right_aligned'><a href='#' target='_blank'>" . "<img src=\"" . $this->imgdirNavigation . "jsmallfib.png\" border='0' title=\"" . Text::sprintf('short_credits', $version_number) . "\" /></a>" . "</td>";
+            $credits_icon = "<td class='right_aligned'><a href='#' target='_blank'>" . "<img src=\"" . $this->imgdirNavigation . "jsmallfib.png\" border='0' title=\"" . Text::sprintf('short_credits', $version_number,date('Y')) . "\" /></a>" . "</td>";
         } else {
             $credits_icon = "<td class='emptyTd'></td>";
         }
