@@ -249,15 +249,15 @@
                         <option value="HTMLUPLOAD">HTMLUPLOAD</option>
                     </field>
 	
-                    <field name="swfupload_file_size_limit_number" type="text" size="15" default="0" label="SWFUPLOAD_FILE_SIZE_LIMIT_NUMBER" description="SWFUPLOAD_FILE_SIZE_LIMIT_NUMBER_DESC" />
+                    <field name="swfupload_file_size_limit_number" showon="upload_type:swfupload" type="text" size="15" default="0" label="SWFUPLOAD_FILE_SIZE_LIMIT_NUMBER" description="SWFUPLOAD_FILE_SIZE_LIMIT_NUMBER_DESC" />
 		
-                    <field name="swfupload_file_size_limit_unit" type="list" default="KB" label="SWFUPLOAD_FILE_SIZE_LIMIT_UNIT" description="SWFUPLOAD_FILE_SIZE_LIMIT_UNIT_DESC">
+                    <field name="swfupload_file_size_limit_unit" showon="upload_type:swfupload" type="list" default="KB" label="SWFUPLOAD_FILE_SIZE_LIMIT_UNIT" description="SWFUPLOAD_FILE_SIZE_LIMIT_UNIT_DESC">
                         <option value="KB">KB</option>
                         <option value="MB">MB</option>
                         <option value="GB">GB</option>
                     </field>
 	
-                    <field name="swfupload_button_action" type="list" default="1" label="SWFUPLOAD_BUTTON_ACTION" description="SWFUPLOAD_BUTTON_ACTION_DESC">
+                    <field name="swfupload_button_action" showon="upload_type:swfupload" type="list" default="1" label="SWFUPLOAD_BUTTON_ACTION" description="SWFUPLOAD_BUTTON_ACTION_DESC">
                         <option value="0">UPLOAD_SINGLE_FILE</option>
                         <option value="1">UPLOAD_MULTIPLE_FILES</option>
                     </field>
@@ -269,8 +269,8 @@
                         <option value="3">SWFUPLOAD_RESOLVE_CONFLICT_OPTION_ARCHIVE</option>
                     </field>
 	
-                    <field name="swfupload_file_upload_limit" type="text" size="15" default="100" label="SWFUPLOAD_FILE_UPLOAD_LIMIT" description="SWFUPLOAD_FILE_UPLOAD_LIMIT_DESC" />
-                    <field name="swfupload_file_types" type="textarea" cols="25" rows="3" default="*.*" label="SWFUPLOAD_FILE_TYPES" description="SWFUPLOAD_FILE_TYPES_DESC" />
+                    <field name="swfupload_file_upload_limit" showon="upload_type:swfupload" type="text" size="15" default="100" label="SWFUPLOAD_FILE_UPLOAD_LIMIT" description="SWFUPLOAD_FILE_UPLOAD_LIMIT_DESC" />
+                    <field name="swfupload_file_types" showon="upload_type:swfupload" type="textarea" cols="25" rows="3" default="*.*" label="SWFUPLOAD_FILE_TYPES" description="SWFUPLOAD_FILE_TYPES_DESC" />
                     <field name="swfupload_file_types_description" type="text" size="30" default="All files" label="SWFUPLOAD_FILE_TYPES_DESCRIPTION" description="SWFUPLOAD_FILE_TYPES_DESCRIPTION_DESC" />
 
         	<!--field name="split_upload_section" type="radio" default="0" label="SPLIT_UPLOAD_SECTION" description="SPLIT_UPLOAD_SECTION_DESC">
