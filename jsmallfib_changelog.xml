@@ -10,9 +10,10 @@
         <change>
             <item>Joomla 6 compatibility</item>
         </change>
-        <fix>
+        <delete>
             <item>Remove DS Constant</item>
-        </fix>
+            <item> SWFUpload library</item>
+        </delete>
         <addition>
             <item>Accept webp images</item>
             <item>Update server on github</item>
