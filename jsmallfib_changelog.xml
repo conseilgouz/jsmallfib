@@ -3,6 +3,18 @@
 		<element>jsmallfib</element>
 		<type>plugin</type>
 		<group>content</group>
+		<version>5.0.2</version>
+        <note>
+            <item>10/06/2026</item>
+        </note>
+        <change>
+            <item>Becomes a service provider</item>
+        </change>
+	</changelog>
+	<changelog>
+		<element>jsmallfib</element>
+		<type>plugin</type>
+		<group>content</group>
 		<version>5.0.1</version>
         <note>
             <item>09/06/2026</item>

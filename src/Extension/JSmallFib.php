@@ -52,21 +52,20 @@
  *
  * *************************************************************************
  */
-
+namespace Lomart\Plugin\Content\JSmallFib\Extension;
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Archive\Archive;
 use Joomla\Archive\Zip;
+use Joomla\CMS\Event\Content\ContentPrepareEvent;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Database\DatabaseInterface;
-
-// Joomla 3 does not provide a define for '/' anymore, so we redefine it here
-// 27/7/19 : https://forum.joomla.fr/forum/joomla-3-x/extensions-tierces/224257-jsmallfib?p=2003741#post2003741
+use Joomla\Event\SubscriberInterface;
 
 define('LOG_TYPE_TEXT', 0);
 define('LOG_TYPE_JSON', 1);
@@ -103,7 +102,7 @@ define('LOG_ACTION_UPLOAD_ERROR_6', 6);
 define('LOG_ACTION_UPLOAD_ERROR_7', 7);
 define('LOG_ACTION_UPLOAD_ERROR_8', 8);
 
-class plgContentjsmallfib extends CMSPlugin
+class JSmallFib extends CMSPlugin implements SubscriberInterface
 {
     public $DEBUG_enabled;
 
@@ -224,18 +223,36 @@ class plgContentjsmallfib extends CMSPlugin
     public $thumbsize;
 
     public $unzip_allow;
-
-    public function __construct(&$subject, $config)
+    
+    /**
+     * @inheritDoc
+     *
+     * @return string[]
+     *
+     * @since 4.1.0
+     */
+    public static function getSubscribedEvents(): array
     {
-        // $config['language']=false;
+        return [
+            'onContentPrepare' 	=> 'onContentPrepare',
+        ];
+    }
+
+
+    public function __construct(&$subject, $config = [])
+    {
         parent::__construct($subject, $config);
         $this->loadLanguage();
     }
 
-    public function onContentPrepare($context, &$article, &$params, $limitstart = null)
+    public function onContentPrepare(ContentPrepareEvent $event) // ($context, &$article, &$params, $limitstart = 0)
     {
         $version_number = "5.0";
 
+        $context = $event->getContext();
+        $article = $event->getItem();
+        $params = $event->getParams();
+        
         // return if manually disabled in this article (needed for demo purposes)
         if (strstr($article->text, "jsmallfib_disabled_here")) {
             $article->text = preg_replace("/jsmallfib_disabled_here/", "", $article->text);

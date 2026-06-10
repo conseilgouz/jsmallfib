@@ -2,15 +2,15 @@
 <extension version="5.0" type="plugin" group="content" method="upgrade">
 	<name>PLG_JSMALLFIB_TITLE</name>
 	<author>ConseilGouz</author>
-	<creationDate>2026-06-09</creationDate>
+	<creationDate>2026-06-10</creationDate>
 	<copyright>Copyright (c) 2009-today Conseilgouz. All rights reserved.</copyright>
 	<license>GNU/GPLv3 https://www.gnu.org/licenses/gpl-3.0.html</license>
 	<authorUrl>https://www.conseilgouz.com</authorUrl>
-	<version>5.0.1</version>
+	<version>5.0.2</version>
 	<description>PLG_JSMALLFIB_DESC</description>
-
+    <namespace path="src">Lomart\Plugin\Content\JSmallFib</namespace>
 	<files>
-		<filename plugin="jsmallfib">jsmallfib.php</filename>
+		<folder plugin="jsmallfib">services</folder>
 		<folder>language</folder>
 		<folder>media</folder>
 	</files>
@@ -306,22 +306,22 @@
                     <field type="spacer" hr="true" />
                     <field type="spacer" label="LOOKANDFEEL_OPTIONS_TITLE_FILES" />
                         
-                    <field name="header_bgcolor" type="text" size ="15" default="FFFFFF" label="HEADER_BGCOLOR" description="HEADER_BGCOLOR_DESC" />
+                    <field name="header_bgcolor" type="color" size ="15" default="FFFFFF" label="HEADER_BGCOLOR" description="HEADER_BGCOLOR_DESC" />
                     
                     <field name="js_icon_width" type="text" size ="15" default="32" label="JS_ICON_WIDTH" description="JS_ICON_WIDTH_DESC" />
                     <field name="js_icon_padding" type="text" size ="15" default="12" label="JS_ICON_PADDING" description="JS_ICON_PADDING_DESC" />
 
                     <field name="min_row_height" type="text" size ="15" default="40" label="ROW_HEIGHT" description="ROW_HEIGHT_DESC" />
 			
-                    <field name="highlighted_color" type="text" size ="15" default="FFD" label="HIGHLIGHTED_COLOR" description="HIGHLIGHTED_COLOR_DESC" />
+                    <field name="highlighted_color" type="color" size ="15" default="FFD" label="HIGHLIGHTED_COLOR" description="HIGHLIGHTED_COLOR_DESC" />
 			
-                    <field name="oddrows_color" type="text" size ="15" default="F9F9F9" label="ODDROWS_COLOR" description="ODDROWS_COLOR_DESC" />
+                    <field name="oddrows_color" type="color" size ="15" default="F9F9F9" label="ODDROWS_COLOR" description="ODDROWS_COLOR_DESC" />
 			
-                    <field name="evenrows_color" type="text" size ="15" default="FFFFFF" label="EVENROWS_COLOR" description="EVENROWS_COLOR_DESC" />
+                    <field name="evenrows_color" type="color" size ="15" default="FFFFFF" label="EVENROWS_COLOR" description="EVENROWS_COLOR_DESC" />
 
-                    <field name="framebox_bgcolor" type="text" size ="15" default="FFFFFF" label="FRAMEBOX_BGCOLOR" description="FRAMEBOX_BGCOLOR_DESC" />
+                    <field name="framebox_bgcolor" type="color" size ="15" default="FFFFFF" label="FRAMEBOX_BGCOLOR" description="FRAMEBOX_BGCOLOR_DESC" />
 			
-                    <field name="framebox_linecolor" type="text" size ="15" default="CDD2D6" label="FRAMEBOX_LINECOLOR" description="FRAMEBOX_LINECOLOR_DESC" />
+                    <field name="framebox_linecolor" type="color" size ="15" default="CDD2D6" label="FRAMEBOX_LINECOLOR" description="FRAMEBOX_LINECOLOR_DESC" />
 			
                     <field name="framebox_border" type="text" size ="15" default="1" label="FRAMEBOX_BORDER" description="FRAMEBOX_BORDER_DESC" />
 			
@@ -336,16 +336,16 @@
                         <option value="outset">OUTSET</option>
                     </field>
 	
-                    <field name="line_bgcolor" type="text" size ="15" default="CDD2D6" label="LINE_BGCOLOR" description="LINE_BGCOLOR_DESC" />
+                    <field name="line_bgcolor" type="color" size ="15" default="CDD2D6" label="LINE_BGCOLOR" description="LINE_BGCOLOR_DESC" />
 			
                     <field name="line_height" type="text" size ="15" default="1" label="LINE_HEIGHT" description="LINE_HEIGHT_DESC" />
 
                     <field type="spacer" hr="true" />
                     <field type="spacer" label="LOOKANDFEEL_OPTIONS_TITLE_ACTIONS" />
 
-                    <field name="uploadbox_bgcolor" type="text" size ="15" default="FFFFFF" label="UPLOADBOX_BGCOLOR" description="UPLOADBOX_BGCOLOR_DESC" />
+                    <field name="uploadbox_bgcolor" type="color" size ="15" default="FFFFFF" label="UPLOADBOX_BGCOLOR" description="UPLOADBOX_BGCOLOR_DESC" />
 			
-                    <field name="uploadbox_linecolor" type="text" size ="15" default="CDD2D6" label="UPLOADBOX_LINECOLOR" description="UPLOADBOX_LINECOLOR_DESC" />
+                    <field name="uploadbox_linecolor" type="color" size ="15" default="CDD2D6" label="UPLOADBOX_LINECOLOR" description="UPLOADBOX_LINECOLOR_DESC" />
 			
                     <field name="uploadbox_border" type="text" size ="15" default="1" label="UPLOADBOX_BORDER" description="UPLOADBOX_BORDER_DESC" />
 			
@@ -363,9 +363,9 @@
                     <field type="spacer" hr="true" />
                     <field type="spacer" label="LOOKANDFEEL_OPTIONS_TITLE_INPUTBOXES" />
 
-                    <field name="inputbox_bgcolor" type="text" size ="15" default="FFFFFF" label="INPUTBOX_BGCOLOR" description="INPUTBOX_BGCOLOR_DESC" />
+                    <field name="inputbox_bgcolor" type="color" size ="15" default="FFFFFF" label="INPUTBOX_BGCOLOR" description="INPUTBOX_BGCOLOR_DESC" />
 			
-                    <field name="inputbox_linecolor" type="text" size ="15" default="CDD2D6" label="INPUTBOX_LINECOLOR" description="INPUTBOX_LINECOLOR_DESC" />
+                    <field name="inputbox_linecolor" type="color" size ="15" default="CDD2D6" label="INPUTBOX_LINECOLOR" description="INPUTBOX_LINECOLOR_DESC" />
 			
                     <field name="inputbox_border" type="text" size ="15" default="1" label="INPUTBOX_BORDER" description="INPUTBOX_BORDER_DESC" />
 			
@@ -383,9 +383,9 @@
                     <field type="spacer" hr="true" />
                     <field type="spacer" label="LOOKANDFEEL_OPTIONS_TITLE_ALERTBOXES" />
 
-                    <field name="errorbox_bgcolor" type="text" size ="15" default="FFE4E1" label="ERRORBOX_BGCOLOR" description="ERRORBOX_BGCOLOR_DESC" />
+                    <field name="errorbox_bgcolor" type="color" size ="15" default="FFE4E1" label="ERRORBOX_BGCOLOR" description="ERRORBOX_BGCOLOR_DESC" />
 			
-                    <field name="errorbox_linecolor" type="text" size ="15" default="F8A097" label="ERRORBOX_LINECOLOR" description="ERRORBOX_LINECOLOR_DESC" />
+                    <field name="errorbox_linecolor" type="color" size ="15" default="F8A097" label="ERRORBOX_LINECOLOR" description="ERRORBOX_LINECOLOR_DESC" />
 			
                     <field name="errorbox_border" type="text" size ="15" default="1" label="ERRORBOX_BORDER" description="ERRORBOX_BORDER_DESC" />
 			
@@ -400,8 +400,8 @@
                         <option value="outset">OUTSET</option>
                     </field>
 	
-                    <field name="successbox_bgcolor" type="text" size ="15" default="E7F6DC" label="SUCCESSBOX_BGCOLOR" description="SUCCESSBOX_BGCOLOR_DESC" />
-                    <field name="successbox_linecolor" type="text" size ="15" default="66B42D" label="SUCCESSBOX_LINECOLOR" description="SUCCESSBOX_LINECOLOR_DESC" />
+                    <field name="successbox_bgcolor" type="color" size ="15" default="E7F6DC" label="SUCCESSBOX_BGCOLOR" description="SUCCESSBOX_BGCOLOR_DESC" />
+                    <field name="successbox_linecolor" type="color" size ="15" default="66B42D" label="SUCCESSBOX_LINECOLOR" description="SUCCESSBOX_LINECOLOR_DESC" />
                     <field name="successbox_border" type="text" size ="15" default="1" label="SUCCESSBOX_BORDER" description="SUCCESSBOX_BORDER_DESC" />
                     <field name="successbox_linetype" type="list" default="solid" label="SUCCESSBOX_LINETYPE" description="SUCCESSBOX_LINETYPE_DESC">
                         <option value="solid">SOLID</option>
@@ -475,7 +475,7 @@
                         <option value="2">AND_EMAIL</option>
                     </field>
 			
-                    <field name="log_highlighted_color" type="text" size ="15" default="FF6600" label="LOG_HIGHLIGHTED_COLOR" description="LOG_HIGHLIGHTED_COLOR_DESC" />
+                    <field name="log_highlighted_color" type="color" size ="15" default="FF6600" label="LOG_HIGHLIGHTED_COLOR" description="LOG_HIGHLIGHTED_COLOR_DESC" />
 
                     <field type="spacer" hr="true" />
                     <field type="spacer" label="LOGGING_OPTIONS_TITLE_EMAIL" />
