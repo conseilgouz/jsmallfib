@@ -6,15 +6,16 @@
 	<copyright>Copyright (c) 2009-today Conseilgouz. All rights reserved.</copyright>
 	<license>GNU/GPLv3 https://www.gnu.org/licenses/gpl-3.0.html</license>
 	<authorUrl>https://www.conseilgouz.com</authorUrl>
-	<version>5.0.2</version>
+	<version>5.0.3</version>
 	<description>PLG_JSMALLFIB_DESC</description>
     <namespace path="src">Lomart\Plugin\Content\JSmallFib</namespace>
 	<files>
 		<folder plugin="jsmallfib">services</folder>
 		<folder>language</folder>
+        <folder>src</folder>
 		<folder>media</folder>
 	</files>
-
+	<scriptfile>script.php</scriptfile>
 	<updateservers>
 		<server type="extension" priority="1" name="Jsmallfib Update Site">https://raw.githubusercontent.com/conseilgouz/updates_github/master/jsmallfib.xml</server>
 	</updateservers>

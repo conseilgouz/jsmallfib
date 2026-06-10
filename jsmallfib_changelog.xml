@@ -3,13 +3,17 @@
 		<element>jsmallfib</element>
 		<type>plugin</type>
 		<group>content</group>
-		<version>5.0.2</version>
+		<version>5.0.3</version>
         <note>
             <item>10/06/2026</item>
         </note>
         <change>
             <item>Becomes a service provider</item>
         </change>
+        <addition>
+            <item>Installation script to check Joomla/PHP versions</item>
+            <item>Enable plugin at end of installation</item>
+        </addition>
 	</changelog>
 	<changelog>
 		<element>jsmallfib</element>
