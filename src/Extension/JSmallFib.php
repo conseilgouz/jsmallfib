@@ -52,7 +52,9 @@
  *
  * *************************************************************************
  */
+
 namespace Lomart\Plugin\Content\JSmallFib\Extension;
+
 // no direct access
 defined('_JEXEC') or die('Restricted access');
 
@@ -223,7 +225,7 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
     public $thumbsize;
 
     public $unzip_allow;
-    
+
     /**
      * @inheritDoc
      *
@@ -238,7 +240,6 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
         ];
     }
 
-
     public function __construct(&$subject, $config = [])
     {
         parent::__construct($subject, $config);
@@ -247,12 +248,12 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
 
     public function onContentPrepare(ContentPrepareEvent $event) // ($context, &$article, &$params, $limitstart = 0)
     {
-        $version_number = "5.0";
+        $version_number = $this->get_version();
 
         $context = $event->getContext();
         $article = $event->getItem();
         $params = $event->getParams();
-        
+
         // return if manually disabled in this article (needed for demo purposes)
         if (strstr($article->text, "jsmallfib_disabled_here")) {
             $article->text = preg_replace("/jsmallfib_disabled_here/", "", $article->text);
@@ -314,8 +315,8 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
         $this->filter_list_allow = $this->params->def('filter_list_allow', '1');
         $this->filter_list_width = $this->params->def('filter_list_width', '220');
 
-        $this->imgdirNavigation = "plugins/content/jsmallfib/media/" . $this->params->def('js_iconset', 'smallerik') . "/navigationIcons/";
-        $this->imgdirExtensions = "plugins/content/jsmallfib/media/" . $this->params->def('js_iconset', 'smallerik') . "/extensionsIcons/";
+        $this->imgdirNavigation = "media/plg_content_jsmallfib/images/" . $this->params->def('js_iconset', 'smallerik') . "/navigationIcons/";
+        $this->imgdirExtensions = "media/plg_content_jsmallfib/images/" . $this->params->def('js_iconset', 'smallerik') . "/extensionsIcons/";
 
         $this->icon_width = $this->params->def('js_icon_width', 32);
         $this->icon_padding = $this->params->def('js_icon_padding', 12);
@@ -384,21 +385,6 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
         $groupbound_prefix = $groupbound_prefix_use ? $this->params->def('groupbound_prefix', "Shared area for group ID") : "";
         $groupbound_suffix = $this->params->def('groupbound_suffix', "");
         $groupbound_parameter = $this->params->def('groupbound_parameter', 0); // 0 for ID, 1 for TITLE
-
-        // remove magic quotes if needed
-        if (function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc()) {
-
-            function js_stripslashes_deep($value)
-            {
-                $value = is_array($value) ? array_map('js_stripslashes_deep', $value) : stripslashes($value);
-                return $value;
-            }
-
-            $_POST = array_map('js_stripslashes_deep', $_POST);
-            $_GET = array_map('js_stripslashes_deep', $_GET);
-            $_COOKIE = array_map('js_stripslashes_deep', $_COOKIE);
-            $_REQUEST = array_map('js_stripslashes_deep', $_REQUEST);
-        }
 
         // split the article text in two parts (before and after the FIRST occurrence of the command)
         $text_array = array();
@@ -508,7 +494,7 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
         $db->setQuery($query);
         try {
             $row = $db->loadObjectList();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Factory::getApplication()->enqueueMessage('SQL error '. $e->getCode() .' '. $e->getMessage());
             return false;
         }
@@ -534,6 +520,7 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
 
         // set up links to other groupbound repositories (to be enabled if user belongs to more than one usergroup and GROUPBOUND keyword is used either in default path or in repository)
         $enable_usergroup_switch_links = 0;
+        $usergroup_switch_links = "";
         if ($usergroup_memberships > 1) {
             $usergroup_switch_links = "</div><div id='JS_FILES_DIV'>" . "<table>";
         }
@@ -696,12 +683,12 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
 
         // GOT HERE SO GO AHEAD WITH DISPLAY
 
-        $plg	= 'plugins/content/jsmallfib/';
+        $plg	= 'media/plg_content_jsmallfib/';
 
         $wa = Factory::getApplication()->getDocument()->getWebAssetManager();
 
-        $wa->addInlineScript($this->do_js());
         $wa->addInlineStyle($this->do_css());
+        $wa->registerAndUseScript('jsmallfib', $plg.'js/jsmallfib.js');
 
         $error = null;
         $success = null;
@@ -1380,6 +1367,7 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
                             $error_text = Text::sprintf('swfupload_error_1', $today, $this->chosen_encoding($filename), $this->chosen_encoding($relative_dir), $username, $remote_address, ini_get('upload_max_filesize'));
                         } else {
                             if ($log_uploads) {
+                                $log_action_upload_error = 0;
                                 switch ($other) {
                                     case 2:
                                         $log_action_upload_error = LOG_ACTION_UPLOAD_ERROR_2;
@@ -2169,7 +2157,7 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
         $hide_credits_icon = $this->params->def('hide_credits_icon', 0);
 
         if (! $hide_credits_icon) {
-            $credits_icon = "<td class='right_aligned'><a href='#' target='_blank'>" . "<img src=\"" . $this->imgdirNavigation . "jsmallfib.png\" border='0' title=\"" . Text::sprintf('short_credits', $version_number,date('Y')) . "\" /></a>" . "</td>";
+            $credits_icon = "<td class='right_aligned'><a href='#' target='_blank'>" . "<img src=\"" . $this->imgdirNavigation . "jsmallfib.png\" border='0' title=\"" . Text::sprintf('short_credits', $version_number, date('Y')) . "\" /></a>" . "</td>";
         } else {
             $credits_icon = "<td class='emptyTd'></td>";
         }
@@ -2830,14 +2818,14 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
             //             }
             $query = "SELECT user_id FROM #__user_usergroup_map WHERE group_id = ".$trusted_groups[0];
 
-            for ($i = 1; $i < count($groups); $i++) {
+            for ($i = 1; $i < count($trusted_groups); $i++) {
                 $query .= " AND group_id = ".$trusted_groups[$i];
             }
 
             $db->setQuery($query);
             try {
                 $row = $db->loadObjectList();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 Factory::getApplication()->enqueueMessage('SQL error '. $e->getCode() .' '. $e->getMessage());
                 return false;
             }
@@ -2874,41 +2862,8 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
     }
 
     // ***********************************************************************************************************************
-    // Javascript and Cascading Style Sheets used locally, and other functions
+    // Cascading Style Sheets used locally, and other functions
     // ***********************************************************************************************************************
-    public function do_js()
-    {
-        $js = "function confirmDelfolder(baselink, dir, delfolder, msgString) {" .
-        "	var browser=navigator.appName;" . "	var b_version=navigator.appVersion;" . "	var version=parseFloat(b_version);" .
-        "	if (confirm(msgString)) {" .
-        "	if (browser=='Netscape')" . "	{" . "	window.location=baselink+'&dir='+escape(encodeURI(dir))+'&delfolder='+escape(encodeURI(delfolder));" . // Firefox
-        "	}" . "	else if (browser=='Microsoft Internet Explorer')" . "	{" . "	window.location=baselink+'&dir='+escape(dir)+'&delfolder='+escape(delfolder);" . // IE
-        "	}" . "	else" . "	{" . "	window.location=baselink+'&dir='+escape(dir)+'&delfolder='+escape(delfolder);" . // treat others like IE
-        "	}" . "	return;" . "	}" . "	}" .
-        "	function confirmDelfile(baselink, dir, delfile, msgString) {" .
-        "	var browser=navigator.appName;" . "	var b_version=navigator.appVersion;" . "	var version=parseFloat(b_version);" .
-        "	if (confirm(msgString)) {" .
-        "	if (browser=='Netscape')" . "	{" . "	window.location=baselink+'&dir='+escape(encodeURI(dir))+'&delfile='+escape(encodeURI(delfile));" . // Firefox
-        "	}" . "	else if (browser=='Microsoft Internet Explorer')" . "	{" . "	window.location=baselink+'&dir='+escape(dir)+'&delfile='+escape(delfile);" . // IE
-        "	}" . "	else" . "	{" . "	window.location=baselink+'&dir='+escape(dir)+'&delfile='+escape(delfile);" . // treat others like IE
-        "	}" . "	return;" . "	}" . "	}" .
-        "	function confirmExtractfile(baselink, dir, extfile, msgString) {" .
-        "	var browser=navigator.appName;" . "	var b_version=navigator.appVersion;" . "	var version=parseFloat(b_version);" .
-        "	if (confirm(msgString)) {" .
-        "	if (browser=='Netscape')" . "	{" . "	window.location=baselink+'&dir='+escape(encodeURI(dir))+'&extfile='+escape(encodeURI(extfile));" . // Firefox
-        "	}" . "	else if (browser=='Microsoft Internet Explorer')" . "	{" . "	window.location=baselink+'&dir='+escape(dir)+'&extfile='+escape(extfile);" . // IE
-        "	}" . "	else" . "	{" . "	window.location=baselink+'&dir='+escape(dir)+'&extfile='+escape(extfile);" . // treat others like IE
-        "	}" . "	return;" . "	}" . "	}" .
-        "	function confirmRestoreFile(baselink, dir, restorefile, msgString) {" .
-        "	var browser=navigator.appName;" . "	var b_version=navigator.appVersion;" . "	var version=parseFloat(b_version);" .
-        "	if (confirm(msgString)) {" .
-        "	if (browser=='Netscape')" . "	{" . "	window.location=baselink+'&dir='+escape(encodeURI(dir))+'&restorefile='+escape(encodeURI(restorefile));" . // Firefox
-        "	}" . "	else if (browser=='Microsoft Internet Explorer')" . "	{" . "	window.location=baselink+'&dir='+escape(dir)+'&restorefile='+escape(restorefile);" . // IE
-        "	}" . "	else" . "	{" . "	window.location=baselink+'&dir='+escape(dir)+'&restorefile='+escape(restorefile);" . // treat others like IE
-        "	}" . "	return;" . "	}" . "	}";
-
-        return ($js);
-    }
 
     public function do_css()
     {
@@ -3352,7 +3307,7 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
     public function chosen_encoding($in_string)
     {
         if ($this->encode_to_utf8) {
-            return utf8_encode($in_string);
+            return  mb_convert_encoding($in_string, 'UTF-8', 'ISO-8859-1');
         } else {
             return $in_string;
         }
@@ -3361,7 +3316,7 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
     public function chosen_decoding($in_string)
     {
         if ($this->encode_to_utf8) {
-            return utf8_decode($in_string);
+            return mb_convert_encoding($in_string, 'ISO-8859-1', 'UTF-8');
         } else {
             return $in_string;
         }
@@ -3519,5 +3474,23 @@ class JSmallFib extends CMSPlugin implements SubscriberInterface
             }
             @rmdir($dir . '/' . "JS_THUMBS");
         }
+    }
+
+    private function get_version()
+    {
+        $db = Factory::getContainer()->get(DatabaseInterface::class);
+        $query = $db->getQuery(true);
+        $query
+            ->select($db->quoteName('manifest_cache'))
+            ->from($db->quoteName('#__extensions'))
+            ->where($db->quoteName('element') . '=' . $db->Quote('jsmallfib'))
+            ->where($db->quoteName('type') . '=' . $db->Quote('plugin'))
+            ->where($db->quoteName('folder') . '=' . $db->Quote('content'));
+
+        $db->setQuery($query, 0, 1);
+        $row = $db->loadAssoc();
+        $tmp = json_decode($row['manifest_cache']);
+        $version = $tmp->version;
+        return $version;
     }
 } // end of plugin class extension

@@ -3,6 +3,22 @@
 		<element>jsmallfib</element>
 		<type>plugin</type>
 		<group>content</group>
+		<version>5.0.4</version>
+        <note>
+            <item>11/06/2026</item>
+        </note>
+        <fix>
+            <item>PHP 8.5 : fix deprecation codes</item>
+        </fix>
+        <change>
+            <item>moving media images folder to media/plg_content_jsmallfib/images</item>
+            <item>moving js code to media/plg_content_jsmallfib/js</item>
+        </change>
+	</changelog>
+	<changelog>
+		<element>jsmallfib</element>
+		<type>plugin</type>
+		<group>content</group>
 		<version>5.0.3</version>
         <note>
             <item>10/06/2026</item>
